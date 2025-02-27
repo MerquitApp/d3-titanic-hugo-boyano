@@ -1,0 +1,87 @@
+---
+import ChartLayout from "../../layouts/ChartLayout.astro";
+---
+
+<ChartLayout title="Familiares">
+  <div
+    class="family-vertical-chart h-[150px] flex items-end gap-4 justify-center"
+  >
+  </div>
+</ChartLayout>
+
+<script>
+  import * as d3 from "d3";
+  import { DATA } from "../../constants";
+
+  const dataByFamily = d3.group(
+    DATA,
+    (v) => v.SibSp,
+    (v) => v.Survived
+  );
+
+  const groups = [...dataByFamily.keys()].sort((a, b) => +a - +b);
+  const chart = d3.select(".family-vertical-chart");
+
+  const width = 15;
+
+  let idx = 0;
+
+  let largestTotalPeopleCountByFamily = 0;
+
+  dataByFamily.forEach((d) => {
+    const survivedCount = d.get("1")?.length ?? 0;
+    const diedCount = d.get("0")!.length;
+
+    const totalPeopleCount = survivedCount + diedCount;
+
+    if (totalPeopleCount > largestTotalPeopleCountByFamily) {
+      largestTotalPeopleCountByFamily = totalPeopleCount;
+    }
+  });
+
+  dataByFamily.forEach(() => {
+    const d = dataByFamily.get(groups[idx])!;
+    const survivedCount = d.get("1")?.length ?? 0;
+    const diedCount = d.get("0")!.length;
+
+    if (survivedCount === 0) {
+      return;
+    }
+
+    const scaleY = d3
+      .scaleLinear()
+      .domain([0, largestTotalPeopleCountByFamily])
+      .range([0, 150]);
+    const height = scaleY(survivedCount);
+
+    const bar = chart
+      .append("div")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("flex-direction", "column")
+      .style("align-items", "bottom")
+      .style("gap", "5px")
+      .attr("class", "relative group");
+
+    bar
+      .append("div")
+      .attr(
+        "class",
+        "absolute -top-[50px] -right-[15px] group-hover:opacity-100 group-hover:visible z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0"
+      )
+      .text(survivedCount);
+
+    bar
+      .append("div")
+      .style("width", `${width}px`)
+      .style("height", `${height}px`)
+      .style("background-color", "var(--color-chart-primary)")
+      .style("border-radius", "5px")
+      .attr("title", survivedCount)
+      .attr("class", "opacity-50 group-hover:opacity-100 transition-opacity");
+
+    bar.insert("h2").style("opacity", "0.5").text(groups[idx]);
+
+    idx++;
+  });
+</script>

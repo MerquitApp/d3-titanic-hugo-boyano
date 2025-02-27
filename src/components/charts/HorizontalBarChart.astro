@@ -1,0 +1,114 @@
+---
+import ChartLayout from "../../layouts/ChartLayout.astro";
+
+const CLASSES = ["1º", "2º", "3º"];
+---
+
+<ChartLayout title="Clase">
+  <div class="horizontal-bar-chart w-full flex flex-nowrap gap-6">
+    <ul class="flex flex-col gap-2.5 opacity-50">
+      {
+        CLASSES.map((className) => (
+          <li class="text-nowrap text-end">{className}</li>
+        ))
+      }
+    </ul>
+    <div class="flex flex-col justify-between">
+      <svg class="horizontal-bar-chart-svg w-full h-32"> </svg>
+      <ul class="flex justify-between opacity-50">
+        <li>0%</li>
+        <li>50%</li>
+        <li>100%</li>
+      </ul>
+    </div>
+  </div>
+</ChartLayout>
+
+<script>
+  import * as d3 from "d3";
+  import { DATA } from "../../constants";
+
+  const svg = d3.select(".horizontal-bar-chart-svg");
+
+  const dataByClass = d3.group(
+    DATA,
+    (v) => v.Pclass,
+    (d) => d.Survived
+  );
+
+  const GAP = 20;
+
+  let offset = 0;
+
+  const firstClassData = dataByClass.get("1")!;
+  const secondClassData = dataByClass.get("2")!;
+  const thirdClassData = dataByClass.get("3")!;
+
+  const height = 15;
+
+  const scaleXFirstClass = d3
+    .scaleLinear()
+    .domain([
+      0,
+      firstClassData.get("1")!.length + firstClassData.get("0")!.length
+    ])
+    .range([0, 300]);
+  const scaleXSecondClass = d3
+    .scaleLinear()
+    .domain([
+      0,
+      secondClassData.get("1")!.length + secondClassData.get("0")!.length
+    ])
+    .range([0, 300]);
+  const scaleXThirdClass = d3
+    .scaleLinear()
+    .domain([
+      0,
+      thirdClassData.get("1")!.length + thirdClassData.get("0")!.length
+    ])
+    .range([0, 300]);
+
+  const firstClassWidth = scaleXFirstClass(firstClassData.get("1")!.length);
+  const secondClassWidth = scaleXSecondClass(secondClassData.get("1")!.length);
+  const thirdClassWidth = scaleXThirdClass(thirdClassData.get("1")!.length);
+
+  // First class
+  svg
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", offset)
+    .attr("width", firstClassWidth)
+    .attr("height", height)
+    .attr("fill", "var(--color-chart-primary)")
+    .attr("rx", "5px")
+    .append("title")
+    .text(firstClassData.get("1")!.length);
+
+  offset += height + GAP;
+
+  // Second class
+  svg
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", offset)
+    .attr("width", secondClassWidth)
+    .attr("height", height)
+    .attr("fill", "var(--color-chart-secondary)")
+    .attr("rx", "5px")
+    .append("title")
+    .text(secondClassData.get("1")!.length);
+
+  offset += height + GAP;
+
+  // Third class
+  svg
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", offset)
+    .attr("width", thirdClassWidth)
+    .attr("height", height)
+    .attr("fill", "var(--color-chart-supporting-1)")
+    .attr("rx", "5px")
+    .append("title")
+    .text(thirdClassData.get("1")!.length);
+</script>

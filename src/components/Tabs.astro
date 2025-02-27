@@ -1,0 +1,43 @@
+---
+import HandCoinsIcon from "./icons/HandCoinsIcon.astro";
+import MapIcon from "./icons/MapIcon.astro";
+import UserIcon from "./icons/UserIcon.astro";
+
+const TABS = [
+  {
+    name: "Supervivencia",
+    href: "/",
+    icon: UserIcon
+  },
+  {
+    name: "Ubicación",
+    href: "/ubicacion",
+    icon: MapIcon
+  },
+  {
+    name: "Economia",
+    href: "/economia",
+    icon: HandCoinsIcon
+  }
+];
+
+interface Props {
+  activeTab: string;
+}
+
+const { activeTab } = Astro.props;
+---
+
+<nav class="flex flex-col lg:flex-row gap-12 items-center">
+  {
+    TABS.map((tab) => (
+      <a
+        href={tab.href}
+        class={`flex gap-2 items-center text-2xl ${activeTab === tab.name.toLowerCase() ? "text-primary border-b-2 border-primary pb-1" : "text-tertiary"}`}
+      >
+        <tab.icon class="w-6 h-6" />
+        <span>{tab.name}</span>
+      </a>
+    ))
+  }
+</nav>

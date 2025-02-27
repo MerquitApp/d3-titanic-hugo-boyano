@@ -1,0 +1,88 @@
+---
+import ChartLayout from "../../layouts/ChartLayout.astro";
+---
+
+<ChartLayout title="Género">
+  <div class="stacked-horizontal-bar-chart h-[150px] flex flex-col justify-end">
+    <div class="vertical-bar-chart flex items-baseline gap-9 justify-center">
+    </div>
+  </div>
+</ChartLayout>
+
+<script>
+  import * as d3 from "d3";
+import { DATA } from "../../constants";
+
+  const chart = d3.select(".vertical-bar-chart");
+
+  const dataByGender = d3.group(
+    DATA,
+    (v) => v.Sex,
+    (d) => d.Survived
+  );
+
+  const totalPeopleCount = DATA.length;
+  const maleData = dataByGender.get("male")!;
+  const femaleData = dataByGender.get("female")!;
+
+  const width = 65;
+
+  const scaleY = d3.scaleLinear().domain([0, totalPeopleCount]).range([0, 150]);
+
+  const maleHeight = scaleY(maleData.get("1")!.length);
+  const femaleHeight = scaleY(femaleData.get("1")!.length);
+
+  const maleBar = chart
+    .append("div")
+    .style("display", "flex")
+    .style("justify-content", "center")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+    .style("gap", "5px")
+    .attr("class", "relative group");
+
+  maleBar
+    .append("div")
+    .attr(
+      "class",
+      "absolute -top-[50px] right-[13px] group-hover:opacity-100 group-hover:visible z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0"
+    )
+    .text(maleData.get("1")!.length);
+
+  maleBar
+    .append("div")
+    .style("width", `${width}px`)
+    .style("height", `${maleHeight}px`)
+    .style("background-color", "var(--color-chart-secondary)")
+    .style("border-radius", "5px")
+    .attr("title", maleData.get("1")!.length);
+
+  maleBar.insert("h2").style("opacity", "0.5").text("Masculino");
+
+  const femaleBar = chart
+    .append("div")
+    .style("display", "flex")
+    .style("justify-content", "center")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+    .style("gap", "5px")
+    .attr("class", "relative group");
+
+  femaleBar
+    .append("div")
+    .attr(
+      "class",
+      "absolute -top-[50px] right-[13px] group-hover:opacity-100 group-hover:visible z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0"
+    )
+    .text(femaleData.get("1")!.length);
+
+  femaleBar
+    .insert("div")
+    .style("width", `${width}px`)
+    .style("height", `${femaleHeight}px`)
+    .style("border-radius", "5px")
+    .style("background-color", "var(--color-chart-primary)")
+    .attr("title", femaleData.get("1")!.length);
+
+  femaleBar.insert("h2").style("opacity", "0.5").text("Femenino");
+</script>

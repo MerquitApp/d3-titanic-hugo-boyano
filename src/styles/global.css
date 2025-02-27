@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: optional;
+  src: url("/fonts/Inter-VariableFont_opsz,wght.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: optional;
+  src: url("/fonts/Inter-VariableFont_opsz,wght.ttf");
+}
+
+@theme {
+  --color-primary: #5b47fb;
+  --color-secondary: #ffffff;
+  --color-tertiary: #031b4e;
+
+  --color-chart-primary: #6F42C1;
+  --color-chart-secondary: #007BFF;
+  --color-chart-supporting-1: #00CCCC;
+  --color-chart-supporting-2: #0DCAF0;
+  --color-chart-supporting-3: #17A2B8;
+  --font-inter: "Inter", "sans-serif";
+}

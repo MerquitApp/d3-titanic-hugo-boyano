@@ -1,0 +1,208 @@
+---
+import ChartLayout from "../../layouts/ChartLayout.astro";
+
+const ageRanges = ["0-17", "18-24", "25-34", "35-44", "45-64", "65+"];
+---
+
+<ChartLayout title="Edad y Género" className="h-[425px]">
+  <div
+    class="stacked-horizontal-bar-chart w-full h-full flex flex-nowrap gap-6"
+  >
+    <ul class="flex-1 flex flex-col gap-[21px] opacity-50">
+      {
+        ageRanges.map((ageRange) => (
+          <li class="text-nowrap text-end">{ageRange}</li>
+        ))
+      }
+    </ul>
+    <svg class="stacked-horizontal-bar-chart-svg w-full h-full"></svg>
+    <ul class="flex-1 flex flex-col gap-[21px] opacity-50" id="percentages"></ul>
+  </div>
+  <div class="flex items-center justify-between w-full" slot="header">
+    <div class="flex items-center gap-9">
+      <div class="flex items-center gap-2">
+        <div class="bg-chart-secondary h-4 w-4 rounded-full"></div>
+        <h2>Masculino</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="bg-chart-primary h-4 w-4 rounded-full"></div>
+        <h2>Femenino</h2>
+      </div>
+    </div>
+    <div class="flex flex-col">
+      <h3 class="text-lg text-gray-400">Total:</h3>
+      <h2 id="total" class="text-2xl font-bold">000</h2>
+    </div>
+  </div>
+</ChartLayout>
+
+<script>
+  import * as d3 from "d3";
+import { DATA } from "../../constants";
+
+  const ageRanges = [
+    { min: 0, max: 17 },
+    { min: 18, max: 24 },
+    { min: 25, max: 34 },
+    { min: 35, max: 44 },
+    { min: 45, max: 64 },
+    { min: 65, max: Infinity }
+  ];
+
+  const dataByAgeRange = d3.group(
+    DATA,
+    (v) => v.Survived,
+    (d) => {
+      for (const ageRange of ageRanges) {
+        if (+d.Age >= ageRange.min && +d.Age <= ageRange.max) {
+          return ageRange;
+        }
+      }
+    }
+  );
+
+  const svg = d3.select(".stacked-horizontal-bar-chart-svg");
+  const percentages = document.querySelector("#percentages") as HTMLElement;
+  const total = document.querySelector("#total") as HTMLElement;
+  const marginY = 40;
+  const width = 1000;
+  const height = 400 - marginY;
+
+  const survivedDataByAgeRange = dataByAgeRange.get("1")!;
+  const dieDataByAgeRange = dataByAgeRange.get("0")!;
+
+  total.innerHTML = `${DATA.length}`;
+
+  let yOffset = 0;
+  let idx = 0;
+
+  const tmp: number[] = [];
+
+  survivedDataByAgeRange.forEach((d) => {
+    const survivedMaleCount = d.reduce(
+      (acc, v) => acc + +(v.Sex === "male"),
+      0
+    );
+
+    const survivedFemaleCount = d.reduce(
+      (acc, v) => acc + +(v.Sex === "female"),
+      0
+    );
+
+    const dieCount = dieDataByAgeRange.get(ageRanges[idx])!.length;
+
+    const totalPeopleCount = survivedMaleCount + survivedFemaleCount + dieCount;
+
+    tmp.push(totalPeopleCount);
+  });
+
+  const range = d3.max(tmp);
+
+  idx = 0;
+
+  survivedDataByAgeRange.forEach(() => {
+    const key = ageRanges[idx];
+    const d = survivedDataByAgeRange.get(ageRanges[idx])!;
+
+    const survivedMaleCount = d.reduce(
+      (acc, v) => acc + +(v.Sex === "male"),
+      0
+    );
+
+    const survivedFemaleCount = d.reduce(
+      (acc, v) => acc + +(v.Sex === "female"),
+      0
+    );
+
+    const dieCount = dieDataByAgeRange.get(ageRanges[idx])!.length;
+
+    const totalPeopleCount = survivedMaleCount + survivedFemaleCount + dieCount;
+
+    const scaleX = d3
+      .scaleLinear()
+      .domain([0, totalPeopleCount])
+      .range([0, range!]);
+
+    const survivedMaleScaleX = scaleX(survivedMaleCount);
+    const survivedFemaleScaleX = scaleX(survivedFemaleCount);
+
+    let xOffset = survivedMaleScaleX;
+
+    // Empty bar
+    svg
+      .append("rect")
+      .attr("x", survivedFemaleScaleX + survivedMaleScaleX)
+      .attr("y", yOffset)
+      .attr("height", 20)
+      .attr("fill", "#EEEEF5")
+      .attr("rx", "5px")
+      .style(
+        "width",
+        `calc(100% - ${survivedFemaleScaleX + survivedMaleScaleX}px)`
+      )
+      .append("title")
+      .text(dieCount);
+
+    // Duplicated empty bar
+    svg
+      .append("rect")
+      .attr("x", xOffset - 10)
+      .attr("y", yOffset)
+      .attr("height", 20)
+      .attr("fill", "#EEEEF5")
+      .style(
+        "width",
+        `calc(100% - ${survivedFemaleScaleX + survivedMaleScaleX}px)`
+      )
+      .append("title")
+      .text(dieCount);
+
+    // Female
+    svg
+      .append("rect")
+      .attr("x", xOffset)
+      .attr("y", yOffset)
+      .attr("width", survivedFemaleScaleX)
+      .attr("height", 20)
+      .attr("viewBox", [0, 0, width, height])
+      .attr("rx", "5px")
+      .attr("fill", "var(--color-chart-primary)")
+      .append("title")
+      .text(survivedFemaleCount);
+
+    // Duplicated female bar
+    svg
+      .append("rect")
+      .attr("x", xOffset - 10)
+      .attr("y", yOffset)
+      .attr("width", survivedFemaleScaleX)
+      .attr("height", 20)
+      .attr("viewBox", [0, 0, width, height])
+      .attr("fill", "var(--color-chart-primary)")
+      .append("title")
+      .text(survivedFemaleCount);
+
+    // Male
+    svg
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", yOffset)
+      .attr("width", survivedMaleScaleX)
+      .attr("height", 20)
+      .attr("fill", "var(--color-chart-secondary)")
+      .attr("rx", "5px")
+      .append("title")
+      .text(survivedMaleCount);
+
+    const percentage =
+      (
+        ((survivedMaleCount + survivedFemaleCount) / totalPeopleCount) *
+        100
+      ).toFixed(1) + "%";
+
+    percentages.innerHTML += `<li class="text-nowrap text-start">${percentage}</li>`;
+
+    yOffset += 45;
+    idx++;
+  });
+</script>
