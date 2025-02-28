@@ -41,8 +41,6 @@ const legends = [
     (d) => d.Survived
   );
 
-  console.log(dataByClass);
-
   function getSurvivalPercentage(classData: any) {
     const totalPeopleCount = classData.get("0")?.length + classData.get("1")?.length;
     const survivedCount = classData.get("1")?.length;

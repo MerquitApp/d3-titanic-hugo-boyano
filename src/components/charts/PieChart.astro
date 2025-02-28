@@ -43,6 +43,7 @@ const legends = [
   );
 
   const data: any[] = [];
+
   dataByPort.forEach((d, key) => {
     if (!key) return;
     const survivedCount = d.get("1")?.length ?? 0;

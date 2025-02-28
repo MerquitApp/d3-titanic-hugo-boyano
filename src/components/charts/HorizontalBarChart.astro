@@ -14,7 +14,7 @@ const CLASSES = ["1º", "2º", "3º"];
       }
     </ul>
     <div class="flex flex-col justify-between">
-      <svg class="horizontal-bar-chart-svg w-full h-32"> </svg>
+      <svg class="horizontal-bar-chart-svg w-[250px] h-32"> </svg>
       <ul class="flex justify-between opacity-50">
         <li>0%</li>
         <li>50%</li>
@@ -44,7 +44,8 @@ const CLASSES = ["1º", "2º", "3º"];
   const secondClassData = dataByClass.get("2")!;
   const thirdClassData = dataByClass.get("3")!;
 
-  const height = 15;
+  const barWidth = 15;
+  const width = 250;
 
   const scaleXFirstClass = d3
     .scaleLinear()
@@ -52,21 +53,21 @@ const CLASSES = ["1º", "2º", "3º"];
       0,
       firstClassData.get("1")!.length + firstClassData.get("0")!.length
     ])
-    .range([0, 300]);
+    .range([0, width]);
   const scaleXSecondClass = d3
     .scaleLinear()
     .domain([
       0,
       secondClassData.get("1")!.length + secondClassData.get("0")!.length
     ])
-    .range([0, 300]);
+    .range([0, width]);
   const scaleXThirdClass = d3
     .scaleLinear()
     .domain([
       0,
       thirdClassData.get("1")!.length + thirdClassData.get("0")!.length
     ])
-    .range([0, 300]);
+    .range([0, width]);
 
   const firstClassWidth = scaleXFirstClass(firstClassData.get("1")!.length);
   const secondClassWidth = scaleXSecondClass(secondClassData.get("1")!.length);
@@ -78,13 +79,13 @@ const CLASSES = ["1º", "2º", "3º"];
     .attr("x", 0)
     .attr("y", offset)
     .attr("width", firstClassWidth)
-    .attr("height", height)
+    .attr("height", barWidth)
     .attr("fill", "var(--color-chart-primary)")
     .attr("rx", "5px")
     .append("title")
     .text(firstClassData.get("1")!.length);
 
-  offset += height + GAP;
+  offset += barWidth + GAP;
 
   // Second class
   svg
@@ -92,13 +93,13 @@ const CLASSES = ["1º", "2º", "3º"];
     .attr("x", 0)
     .attr("y", offset)
     .attr("width", secondClassWidth)
-    .attr("height", height)
+    .attr("height", barWidth)
     .attr("fill", "var(--color-chart-secondary)")
     .attr("rx", "5px")
     .append("title")
     .text(secondClassData.get("1")!.length);
 
-  offset += height + GAP;
+  offset += barWidth + GAP;
 
   // Third class
   svg
@@ -106,7 +107,7 @@ const CLASSES = ["1º", "2º", "3º"];
     .attr("x", 0)
     .attr("y", offset)
     .attr("width", thirdClassWidth)
-    .attr("height", height)
+    .attr("height", barWidth)
     .attr("fill", "var(--color-chart-supporting-1)")
     .attr("rx", "5px")
     .append("title")

@@ -24,21 +24,17 @@ import ChartLayout from "../../layouts/ChartLayout.astro";
 
   const width = 15;
 
-  let idx = 0;
-
-  let largestTotalPeopleCountByFamily = 0;
-
-  dataByFamily.forEach((d) => {
-    const survivedCount = d.get("1")?.length ?? 0;
-    const diedCount = d.get("0")!.length;
-
-    const totalPeopleCount = survivedCount + diedCount;
-
-    if (totalPeopleCount > largestTotalPeopleCountByFamily) {
-      largestTotalPeopleCountByFamily = totalPeopleCount;
+  const largestTotalPeopleCountByFamily = d3.max(
+    dataByFamily,
+    (d: any) => {
+      const data = d[1];
+      const survivedCount = data.get("1")?.length ?? 0;
+      const diedCount = data.get("0")!.length;
+      return +(survivedCount + diedCount);
     }
-  });
+  );
 
+  let idx = 0;
   dataByFamily.forEach(() => {
     const d = dataByFamily.get(groups[idx])!;
     const survivedCount = d.get("1")?.length ?? 0;
@@ -50,6 +46,7 @@ import ChartLayout from "../../layouts/ChartLayout.astro";
 
     const scaleY = d3
       .scaleLinear()
+      // @ts-ignore
       .domain([0, largestTotalPeopleCountByFamily])
       .range([0, 150]);
     const height = scaleY(survivedCount);
@@ -67,7 +64,7 @@ import ChartLayout from "../../layouts/ChartLayout.astro";
       .append("div")
       .attr(
         "class",
-        "absolute -top-[50px] -right-[15px] group-hover:opacity-100 group-hover:visible z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0"
+        "absolute -top-[50px] -right-[10px] group-hover:opacity-100 group-hover:visible z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0"
       )
       .text(survivedCount);
 

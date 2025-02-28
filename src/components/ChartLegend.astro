@@ -6,12 +6,13 @@ interface Legend {
 
 interface Props {
   legends: Legend[];
+  className?: string;
 }
 
-const { legends } = Astro.props;
+const { legends, className } = Astro.props;
 ---
 
-<div class="flex justify-between mt-4">
+<div class={`flex justify-between mt-4 ${className}`}>
   {
     legends.map((legend) => (
       <div class="flex items-center mr-4">
