@@ -1,14 +1,13 @@
 ---
 import BubbleChart from "../components/charts/BubbleChart.astro";
 import PieChart from "../components/charts/PieChart.astro";
+import ChartsContainer from "../layouts/ChartsContainer.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout activeTab="ubicación">
-  <main class="max-w-5xl mx-auto mt-16 w-[90%] pb-24">
-    <div class="mt-16 flex flex-col md:flex-row justify-between gap-16">
-      <PieChart />
-      <BubbleChart />
-    </div>
-  </main>
+  <ChartsContainer>
+    <PieChart />
+    <BubbleChart />
+  </ChartsContainer>
 </Layout>

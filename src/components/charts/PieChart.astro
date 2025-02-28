@@ -1,28 +1,27 @@
 ---
 import ChartLayout from "../../layouts/ChartLayout.astro";
+import ChartLegend from "../ChartLegend.astro";
+
+const legends = [
+  {
+    name: "Southampton",
+    color: "var(--color-chart-primary)"
+  },
+  {
+    name: "Cherburgo",
+    color: "var(--color-chart-secondary)"
+  },
+  {
+    name: "Queenstown",
+    color: "var(--color-chart-supporting-1)"
+  }
+];
 ---
 
 <ChartLayout title="Supervivientes por puerto">
   <div class="flex flex-col">
     <svg class="pie-chart h-[300px] w-full"></svg>
-    <div class="flex justify-between mt-4">
-      <div class="flex items-center mr-4">
-        <span class="w-3 h-3 bg-chart-primary rounded-full inline-block mr-2"
-        ></span>
-        <span class="opacity-50">Southampton</span>
-      </div>
-      <div class="flex items-center mr-4">
-        <span class="w-3 h-3 bg-chart-secondary rounded-full inline-block mr-2"
-        ></span>
-        <span class="opacity-50">Cherburgo</span>
-      </div>
-      <div class="flex items-center">
-        <span
-          class="w-3 h-3 bg-chart-supporting-1 rounded-full inline-block mr-2"
-        ></span>
-        <span class="opacity-50">Queenstown</span>
-      </div>
-    </div>
+    <ChartLegend legends={legends} />
   </div>
 </ChartLayout>
 

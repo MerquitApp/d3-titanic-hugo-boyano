@@ -1,7 +1,19 @@
 ---
 import ChartLayout from "../../layouts/ChartLayout.astro";
+import ChartLegend from "../ChartLegend.astro";
 
 const ageRanges = ["0-17", "18-24", "25-34", "35-44", "45-64", "65+"];
+
+const legends = [
+  {
+    name: "Masculino",
+    color: "var(--color-chart-secondary)"
+  },
+  {
+    name: "Femenino",
+    color: "var(--color-chart-primary)"
+  }
+];
 ---
 
 <ChartLayout title="Edad y Género" className="h-[425px]">
@@ -19,16 +31,7 @@ const ageRanges = ["0-17", "18-24", "25-34", "35-44", "45-64", "65+"];
     <ul class="flex-1 flex flex-col gap-[21px] opacity-50" id="percentages"></ul>
   </div>
   <div class="flex items-center justify-between w-full" slot="header">
-    <div class="flex items-center gap-9">
-      <div class="flex items-center gap-2">
-        <div class="bg-chart-secondary h-4 w-4 rounded-full"></div>
-        <h2>Masculino</h2>
-      </div>
-      <div class="flex items-center gap-2">
-        <div class="bg-chart-primary h-4 w-4 rounded-full"></div>
-        <h2>Femenino</h2>
-      </div>
-    </div>
+    <ChartLegend legends={legends} />
     <div class="flex flex-col">
       <h3 class="text-lg text-gray-400">Total:</h3>
       <h2 id="total" class="text-2xl font-bold">000</h2>

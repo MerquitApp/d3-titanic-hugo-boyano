@@ -1,7 +1,31 @@
 ---
 import ChartLayout from "../../layouts/ChartLayout.astro";
+import ChartLegend from "../ChartLegend.astro";
+
+const legends = [
+  {
+    name: "Superviviente",
+    color: "var(--color-chart-primary)"
+  },
+  {
+    name: "Fallecido",
+    color: "var(--color-chart-secondary)"
+  }
+];
 ---
 
 <ChartLayout title="Familia y tarifa del billete">
-  <svg class="scatterplot-chart h-[300px] w-full"></svg>
+  <div class="flex flex-col w-[350px] mx-auto">
+    <svg class="scatterplot-chart h-[300px] w-full"></svg>
+    <ChartLegend legends={legends} />
+  </div>
 </ChartLayout>
+
+<script>
+  import * as d3 from "d3";
+  import { DATA } from "../../constants";
+
+  const dataByFare = d3.group(DATA, (d) => d.Fare);
+
+  console.log(dataByFare);
+</script>
