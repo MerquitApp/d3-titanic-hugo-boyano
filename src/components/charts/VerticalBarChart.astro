@@ -11,7 +11,7 @@ import ChartLayout from "../../layouts/ChartLayout.astro";
 
 <script>
   import * as d3 from "d3";
-import { DATA } from "../../constants";
+  import { DATA } from "../../constants";
 
   const chart = d3.select(".vertical-bar-chart");
 
@@ -57,7 +57,11 @@ import { DATA } from "../../constants";
     .style("border-radius", "5px")
     .attr("title", maleData.get("1")!.length);
 
-  maleBar.insert("h2").style("opacity", "0.5").text("Masculino");
+  maleBar
+    .insert("h2")
+    .style("opacity", "0.5")
+    .style("pointer-events", "none")
+    .text("Masculino");
 
   const femaleBar = chart
     .append("div")
@@ -84,5 +88,9 @@ import { DATA } from "../../constants";
     .style("background-color", "var(--color-chart-primary)")
     .attr("title", femaleData.get("1")!.length);
 
-  femaleBar.insert("h2").style("opacity", "0.5").text("Femenino");
+  femaleBar
+    .insert("h2")
+    .style("opacity", "0.5")
+    .style("pointer-events", "none")
+    .text("Femenino");
 </script>

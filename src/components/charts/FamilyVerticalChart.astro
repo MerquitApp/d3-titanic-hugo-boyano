@@ -24,21 +24,17 @@ import ChartLayout from "../../layouts/ChartLayout.astro";
 
   const width = 15;
 
-  const largestTotalPeopleCountByFamily = d3.max(
-    dataByFamily,
-    (d: any) => {
-      const data = d[1];
-      const survivedCount = data.get("1")?.length ?? 0;
-      const diedCount = data.get("0")!.length;
-      return +(survivedCount + diedCount);
-    }
-  );
+  const largestTotalPeopleCountByFamily = d3.max(dataByFamily, (d: any) => {
+    const data = d[1];
+    const survivedCount = data.get("1")?.length ?? 0;
+    const diedCount = data.get("0")!.length;
+    return +(survivedCount + diedCount);
+  });
 
   let idx = 0;
   dataByFamily.forEach(() => {
     const d = dataByFamily.get(groups[idx])!;
     const survivedCount = d.get("1")?.length ?? 0;
-    const diedCount = d.get("0")!.length;
 
     if (survivedCount === 0) {
       return;
@@ -77,7 +73,11 @@ import ChartLayout from "../../layouts/ChartLayout.astro";
       .attr("title", survivedCount)
       .attr("class", "opacity-50 group-hover:opacity-100 transition-opacity");
 
-    bar.insert("h2").style("opacity", "0.5").text(groups[idx]);
+    bar
+      .insert("h2")
+      .style("opacity", "0.5")
+      .style("pointer-events", "none")
+      .text(groups[idx]);
 
     idx++;
   });

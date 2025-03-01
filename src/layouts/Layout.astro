@@ -21,7 +21,9 @@ const { activeTab } = Astro.props;
   <body class="bg-secondary font-inter">
     <header class="bg-secondary py-14 shadow">
       <div class="max-w-5xl w-[90%] mx-auto flex flex-col lg:flex-row lg:justify-between gap-16 lg:gap-36 items-center">
-        <h1 class="text-6xl lg:text-5xl text-primary font-bold">Dasnic</h1>
+        <a href="/">
+          <h1 class="text-6xl lg:text-5xl text-primary font-bold">Dasnic</h1>
+        </a>
         <Tabs activeTab={activeTab} />
       </div>
     </header>
